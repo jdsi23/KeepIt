@@ -3,8 +3,8 @@ terraform {
   required_providers { aws = { source = "hashicorp/aws", version = "~> 5.60" } }
 
   backend "s3" {
-    bucket         = "keepit-tf-state-jl"         # from bootstrap output
-    key            = "keepit-infra.tfstate"
+    bucket         = "keepit-tf-state-123456789012"
+    key            = "state/dev.tfstate"
     region         = "us-east-1"
     dynamodb_table = "keepit-tf-locks"            # from bootstrap output
     encrypt        = true

@@ -7,8 +7,14 @@ provider "aws" {
   region = var.region
 }
 
+data "aws_caller_identity" "current" {}
+
+locals {
+  bucket_name = "${var.project}-tf-state-${data.aws_caller_identity.current.account_id}"
+}
+
 resource "aws_s3_bucket" "tf_state" {
-  bucket = "${var.project}-tf-state-${var.account_suffix}"
+  bucket        = local.bucket_name
   force_destroy = false
 }
 
@@ -19,9 +25,7 @@ resource "aws_s3_bucket_versioning" "tf_state" {
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "tf_state" {
   bucket = aws_s3_bucket.tf_state.id
-  rule {
-    apply_server_side_encryption_by_default { sse_algorithm = "AES256" }
-  }
+  rule { apply_server_side_encryption_by_default { sse_algorithm = "AES256" } }
 }
 
 resource "aws_dynamodb_table" "tf_locks" {
